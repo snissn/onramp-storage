@@ -7,7 +7,7 @@ module.exports = {
             {
                 version: `0.8.26`,
                 settings: {
-                    evmVersion: `paris`,
+                    evmVersion: `cancun`,
                 },
             },
         ],
