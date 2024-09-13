@@ -1,29 +1,42 @@
+// scripts/interact.js
+
 const hre = require("hardhat");
 
 async function main() {
   // Compile the contract
   await hre.run('compile');
 
-  // Deploy the contract
-  const ContractFactory = await hre.ethers.getContractFactory("MCOPYTest");
+  // Deploy the TransientStorageExample contract
+  const ContractFactory = await hre.ethers.getContractFactory("TransientStorageExample");
   const contract = await ContractFactory.deploy();
   await contract.deployed();
 
-  console.log(`Contract deployed to address: ${contract.address}`);
+  console.log(`TransientStorageExample deployed to address: ${contract.address}`);
 
   try {
-    // Test data
-    //const testData = hre.ethers.utils.formatBytes32String("Test Data");
-    const testData = "0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"; // hello world
+    // Check the initial lock state
+    let isUnlocked = await contract.isUnlocked();
+    console.log(`Initial state (should be false/locked): ${isUnlocked}`);
 
-    // Call the optimizedCopy function
-    const result = await contract.optimizedCopy(hre.ethers.utils.arrayify(testData));
+    // Unlock the contract
+    const unlockTx = await contract.unlock();
+    await unlockTx.wait();
+    console.log("Unlocked the contract.");
 
-    console.log("Original Data:", testData);
-    console.log("Copied Data:", hre.ethers.utils.parseBytes32String(result));
+    // Check the state after unlocking
+    isUnlocked = await contract.isUnlocked();
+    console.log(`State after unlocking (should be true/unlocked): ${isUnlocked}`);
 
+    // Lock the contract
+    const lockTx = await contract.lock();
+    await lockTx.wait();
+    console.log("Locked the contract.");
+
+    // Check the state after locking
+    isUnlocked = await contract.isUnlocked();
+    console.log(`State after locking (should be false/locked): ${isUnlocked}`);
   } catch (error) {
-    console.error("Error calling `optimizedCopy` function on deployed contract:");
+    console.error("Error interacting with the deployed contract:");
     console.error(error);
   }
 }
@@ -33,5 +46,7 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+
 
 
