@@ -4,6 +4,30 @@ const { ethers } = require("hardhat");
 async function main() {
   const filecoinNetwork = hre.network.name === "calibnet";
   const linearNetwork = hre.network.name === "linea";
+  const hederaNetwork = hre.network.name === "hedera";
+
+  // Deploy source contract on Hedera with constructor arguments
+  if (hederaNetwork) {
+    console.log(`Deploying OnRampSource.sol on ${hre.network.name}...`);
+
+    // Compile the contract
+    await hre.run("compile");
+
+    const sourceContractName = "OnRampSource";
+    const SourceContractFactory = await hre.ethers.getContractFactory(sourceContractName);
+
+    // Constructor arguments for OnRampSource (Linear)
+    const axelarGatewayAddress = "0xB8Cd93C83A974649D76B1c19f311f639e62272BC"; 
+    const axelarGasReceiver = "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6"; 
+
+    // Pass constructor arguments during deployment
+    const sourceContract = await SourceContractFactory.deploy(axelarGatewayAddress, axelarGasReceiver);
+    await sourceContract.deployed();
+
+    console.log(`${sourceContractName} deployed to address: ${sourceContract.address} on ${hre.network.name}`);
+
+    // Optionally interact with Axelar Gateway or Gas Service here if required
+  }
 
   // Deploy source contract on Linear with constructor arguments
   if (linearNetwork) {
