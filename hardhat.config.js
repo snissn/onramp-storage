@@ -1,29 +1,38 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
-//require("dotenv").config(); // Ensure you load environment variables from .env
+require("@nomiclabs/hardhat-etherscan");
 
 module.exports = {
-    solidity: {
-        compilers: [
-            {
-                version: "0.8.20",
-                settings: {
-                    // evmVersion: "cancun",
-                },
-            },
-        ],
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.20",
+        settings: {},
+      },
+    ],
+  },
+  networks: {
+    linea: {
+      url: "https://rpc.sepolia.linea.build",
+      chainId: 59141,
+      accounts: [`0x${process.env.PRIVATE_KEY}`], // Add your private key in .env file
     },
-    networks: {
-        calibnet: {
-            url: "https://api.calibration.node.glif.io/rpc/v1",
-            accounts: [`0x${process.env.PRIVATE_KEY}`], // Load your private key from the .env file
-        },
-        linea: {
-            url: "https://rpc.sepolia.linea.build",
-            chainId: 59141,
-            accounts: [`0x${process.env.PRIVATE_KEY}`],
-        },
+  },
+  etherscan: {
+    apiKey: {
+      linea: "RXVBE8WNAMCZ3UABT1XIHXE1YAY9H72TEF", // Your Etherscan API key
     },
+    customChains: [
+      {
+        network: "linea",
+        chainId: 59141,
+        urls: {
+          apiURL: "https://api-sepolia.lineascan.build/api",
+          browserURL: "https://sepolia.lineascan.build",
+        },
+      },
+    ],
+  },
 };
 
 

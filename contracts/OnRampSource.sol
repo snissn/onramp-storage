@@ -36,10 +36,6 @@ contract OnRampSource is AxelarExecutable {
         string calldata destinationChain,
         string calldata destinationAddress
     ) external payable returns (uint64) {
-        require(
-            offer.token.transferFrom(msg.sender, address(this), offer.amount),
-            "Payment transfer failed"
-        );
 
         uint64 id = nextOfferId++;
         offers[id] = offer;
